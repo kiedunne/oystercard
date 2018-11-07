@@ -1,12 +1,10 @@
 require 'oystercard'
-require 'station'
 
 describe Oystercard do
 
 let(:max_balance) { Oystercard::MAX_BALANCE }
 let(:min_fare) { Oystercard::MIN_FARE }
 let(:station) { double :station, name: 'Angel', zone: 1 }
-let(:journey) { double :journey }
 
   describe ': initialize' do
     it "Has initial card balance of 0" do

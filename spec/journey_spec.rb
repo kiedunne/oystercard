@@ -1,5 +1,3 @@
-require 'oystercard'
-require 'station'
 require 'journey'
 
 describe Journey do
@@ -9,7 +7,6 @@ let(:max_fare) { Journey::MAX_FARE }
 
 let(:station_angel) { double :station_angel, name: 'Angel', zone: 1 }
 let(:station_bank) { double :station_bank, name: 'Bank', zone: 1 }
-# let(:station_epping) { double :station_epping, name: 'Epping', zone: 3 }
 
   it "Stores entry and exit stations" do
     subject.enter_station(station_angel)
