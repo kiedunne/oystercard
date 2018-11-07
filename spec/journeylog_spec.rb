@@ -8,9 +8,23 @@ let(:journey) { double :journey }
 
   it { is_expected.to respond_to(:journey_class)}
 
-  it 'add_journey adds entered station to journey log' do
-    subject.start(journey)
-    expect(subject.journey_log).to eq journey
+  it 'start records the entry station from journey class' do
+    subject.start(station_bank)
+    expect(subject.journey_log[0].journey[:enter]).to eq station_bank
   end
+
+  it 'finish records the exit station from journey class' do
+    subject.start(station_bank)
+    subject.finish(station_angel)
+    expect(subject.journey_log[0].journey[:exit]).to eq station_angel
+  end
+
+  # it 'adds journey to journey log' do
+  #   subject.start(station_angel)
+  #   subject.finish(station_bank)
+  #   subject.add(journey)
+  #   expect(subject.journey_log).to eq journey
+  # end
+
 
 end

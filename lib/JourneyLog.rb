@@ -2,8 +2,8 @@
 class JourneyLog
   attr_reader :journey_class, :journey_log
 
-  def initalize(journey = Journey)
-    @journey_class = journey
+  def initialize(journey_class = Journey)
+    @journey_class = journey_class
     @journey_log = []
   end
 
@@ -16,4 +16,8 @@ class JourneyLog
     @journey_log[0].exit_station(station)
   end
 
+  def add(journey)
+    @journey_log << journey
 end
+
+end 
