@@ -1,10 +1,11 @@
 require 'oystercard'
+require 'station'
 
 describe Oystercard do
 
 let(:max_balance) { Oystercard::MAX_BALANCE }
 let(:min_fare) { Oystercard::MIN_FARE }
-let(:station) {Station.new}
+let(:station) { double :station, name: 'Angel', zone: 1 }
 
   describe ': initialize' do
     it "Has initial card balance of 0" do
@@ -18,7 +19,7 @@ let(:station) {Station.new}
     end
 
     it "Cannot top up over maximum balance" do
-    subject.top_up(max_balance)
+      subject.top_up(max_balance)
       expect { subject.top_up 1 }.to raise_error "Max balance of #{max_balance} exceeded"
     end
   end
@@ -34,13 +35,13 @@ let(:station) {Station.new}
     end
 
     it "Card remembers entry station" do
-      expect(subject.last_trip[:entry]).to eq station
+      expect(subject.history[:entry]).to eq station
     end
 
     it "Can recall trips" do
       subject.touch_out(station)
       journey = { :entry => station, :exit => station }
-      expect(subject.last_trip).to eq journey
+      expect(subject.history).to eq journey
     end
   end
 
