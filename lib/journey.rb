@@ -11,11 +11,11 @@ class Journey
     @fare = 0
   end
 
-  def enter_station(station=nil)
+  def enter_station(station)
     @journey[:enter] = station
   end
 
-  def exit_station(station=nil)
+  def exit_station(station)
     @journey[:exit] = station
   end
 

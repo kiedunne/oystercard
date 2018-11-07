@@ -6,6 +6,7 @@ describe Oystercard do
 let(:max_balance) { Oystercard::MAX_BALANCE }
 let(:min_fare) { Oystercard::MIN_FARE }
 let(:station) { double :station, name: 'Angel', zone: 1 }
+let(:journey) { double :journey }
 
   describe ': initialize' do
     it "Has initial card balance of 0" do
@@ -30,18 +31,15 @@ let(:station) { double :station, name: 'Angel', zone: 1 }
       subject.touch_in(station)
     end
 
-    it "When user touches in- they are in journey" do
-      expect(subject).to be_in_journey
-    end
+    # it "Can recall trips" do
+    #   subject.touch_out(station)
+    #   journey = { :entry => station, :exit => station }
+    #   expect(subject.history).to eq journey
+    # end
 
-    it "Card remembers entry station" do
-      expect(subject.history[:entry]).to eq station
-    end
-
-    it "Can recall trips" do
-      subject.touch_out(station)
-      journey = { :entry => station, :exit => station }
-      expect(subject.history).to eq journey
+    it "Tells journey to record entry station" do
+      expect(subject.current_journey).to receive(:enter_station)
+      subject.touch_in(station)
     end
   end
 
@@ -57,9 +55,9 @@ let(:station) { double :station, name: 'Angel', zone: 1 }
       subject.touch_in(station)
     end
 
-    it "When user touches out- they are not in journey" do
-    subject.touch_out(station)
-      expect(subject).not_to be_in_journey
+    it "Tells journey to record exit station" do
+      expect(subject.current_journey).to receive(:exit_station)
+      subject.touch_out(station)
     end
 
     it "When user touches out- they are deducted the fare for their journey" do
