@@ -6,7 +6,7 @@ class Journey
 
   def initialize
     @journey = {}
-    @fare = 0
+    @fare = MIN_FARE
   end
 
   def enter_station(station)
@@ -26,11 +26,11 @@ class Journey
   end
 
   def fare
-    complete? ? MIN_FARE : MAX_FARE
+    complete? ? zone_fare : MAX_FARE
   end
 
-  def zone
-    @journey[:enter].zone - @journey[:exit].zone
+  def zone_fare
+    (@journey[:enter].zone - @journey[:exit].zone).abs + 1
   end
 
 end
