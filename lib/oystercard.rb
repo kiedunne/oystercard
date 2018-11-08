@@ -1,5 +1,6 @@
 require_relative 'station'
 require_relative 'journey'
+require_relative 'journeylog'
 
 class Oystercard
   attr_reader :balance, :history, :current_journey
@@ -16,11 +17,11 @@ MIN_FARE = 1
     fail "Max balance of #{MAX_BALANCE} exceeded" if @balance + amount > MAX_BALANCE
     @balance += amount
   end
-private
+# private
   def deduct(amount)
     @balance -= amount
   end
-public
+# public
 
   def touch_in(station)
     fail "Not enough funds to touch in" if @balance < MIN_FARE

@@ -16,8 +16,4 @@ class JourneyLog
     @journey_log[0].exit_station(station)
   end
 
-  def add(journey)
-    @journey_log << journey
 end
-
-end 

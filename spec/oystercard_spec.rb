@@ -4,7 +4,10 @@ describe Oystercard do
 
 let(:max_balance) { Oystercard::MAX_BALANCE }
 let(:min_fare) { Oystercard::MIN_FARE }
-let(:station) { double :station, name: 'Angel', zone: 1 }
+let(:station_angel) { double :station, name: 'Angel', zone: 1 }
+let(:station_highgate) { double :station, name: 'Highgate', zone: 3 }
+let(:journey_max_fare) { double :journey, fare: 6 }
+let(:journey_min_fare) { double :journey, fare: 1 }
 
   describe ': initialize' do
     it "Has initial card balance of 0" do
@@ -26,41 +29,49 @@ let(:station) { double :station, name: 'Angel', zone: 1 }
   describe ': touch_in' do
     before (:each) do
       subject.top_up(30)
-      subject.touch_in(station)
+      subject.touch_in(station_angel)
     end
-
-    # it "Can recall trips" do
-    #   subject.touch_out(station)
-    #   journey = { :entry => station, :exit => station }
-    #   expect(subject.history).to eq journey
-    # end
 
     it "Tells journey to record entry station" do
       expect(subject.current_journey).to receive(:enter_station)
-      subject.touch_in(station)
+      subject.touch_in(station_angel)
     end
   end
 
   describe ': touch_in: without top up' do
     it "If card balance below minimum fare amount, cannot touch in" do
-      expect { subject.touch_in(station) }.to raise_error "Not enough funds to touch in"
+      expect { subject.touch_in(station_angel) }.to raise_error "Not enough funds to touch in"
     end
   end
 
   describe ': touch_out' do
     before (:each) do
       subject.top_up(30)
-      subject.touch_in(station)
+      subject.touch_in(station_angel)
     end
 
     it "Tells journey to record exit station" do
       expect(subject.current_journey).to receive(:exit_station)
-      subject.touch_out(station)
+      subject.touch_out(station_angel)
     end
 
-    it "When user touches out- they are deducted the fare for their journey" do
-      expect { subject.touch_out(station) }.to change{ subject.balance }.by -min_fare
+  describe ': deduct' do
+    before (:each) do
+      subject.top_up(30)
+      subject.touch_in(station_angel)
+      subject.touch_out(station_highgate)
     end
-  end
+
+    it "Deducts max fare based on journey completion" do
+      jmf = journey_max_fare.fare
+      expect { subject.deduct(jmf) }.to change{ subject.balance }.by -6
+      end
+    end
+
+    it "Deducts min fare based on journey completion" do
+      jminf = journey_min_fare.fare
+      expect { subject.deduct(jminf) }.to change{ subject.balance }.by -1
+      end
+    end
 
 end

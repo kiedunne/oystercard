@@ -18,13 +18,4 @@ let(:journey) { double :journey }
     subject.finish(station_angel)
     expect(subject.journey_log[0].journey[:exit]).to eq station_angel
   end
-
-  # it 'adds journey to journey log' do
-  #   subject.start(station_angel)
-  #   subject.finish(station_bank)
-  #   subject.add(journey)
-  #   expect(subject.journey_log).to eq journey
-  # end
-
-
 end
