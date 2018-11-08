@@ -26,17 +26,17 @@ let(:journey_min_fare) { double :journey, fare: 1 }
     end
   end
 
-  describe ': touch_in' do
-    before (:each) do
-      subject.top_up(30)
-      subject.touch_in(station_angel)
-    end
-
-    it "Tells journey to record entry station" do
-      expect(subject.current_journey).to receive(:enter_station)
-      subject.touch_in(station_angel)
-    end
-  end
+#   describe ': touch_in' do
+#     # before (:each) do
+#     #   subject.top_up(30)
+#     #   subject.touch_in(station_angel)
+#     # end
+#   #   it "Tells journey to record entry station" do
+#   #     expect(subject.current_journey).to receive(:enter_station)
+#   #     subject.touch_in(station_angel)
+#   #   end
+#   # end
+# end
 
   describe ': touch_in: without top up' do
     it "If card balance below minimum fare amount, cannot touch in" do
@@ -47,31 +47,15 @@ let(:journey_min_fare) { double :journey, fare: 1 }
   describe ': touch_out' do
     before (:each) do
       subject.top_up(30)
+    end
+
+    it "deducts minumum fare when journey complete from Journey class" do
       subject.touch_in(station_angel)
+      expect { subject.touch_out(station_highgate) }.to change{ subject.balance }.by -1
     end
 
-    it "Tells journey to record exit station" do
-      expect(subject.current_journey).to receive(:exit_station)
-      subject.touch_out(station_angel)
+    it "deducts maximum fare when journey incomplete from Journey class" do
+      expect { subject.touch_out(station_highgate) }.to change{ subject.balance }.by -6
     end
-
-  describe ': deduct' do
-    before (:each) do
-      subject.top_up(30)
-      subject.touch_in(station_angel)
-      subject.touch_out(station_highgate)
-    end
-
-    it "Deducts max fare based on journey completion" do
-      jmf = journey_max_fare.fare
-      expect { subject.deduct(jmf) }.to change{ subject.balance }.by -6
-      end
-    end
-
-    it "Deducts min fare based on journey completion" do
-      jminf = journey_min_fare.fare
-      expect { subject.deduct(jminf) }.to change{ subject.balance }.by -1
-      end
-    end
-
+  end
 end
