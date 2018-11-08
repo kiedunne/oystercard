@@ -28,7 +28,7 @@ MIN_FARE = 1
   def touch_out(station)
     @journey_log.finish(station)
     @current_journey.exit_station(station)
-    deduct(@current_journey.fare)
+    deduct(@current_journey.zone_fare)
   end
 
   private
