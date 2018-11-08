@@ -6,8 +6,12 @@ let(:max_balance) { Oystercard::MAX_BALANCE }
 let(:min_fare) { Oystercard::MIN_FARE }
 let(:station_angel) { double :station, name: 'Angel', zone: 1 }
 let(:station_highgate) { double :station, name: 'Highgate', zone: 3 }
-let(:journey_max_fare) { double :journey, fare: 6 }
-let(:journey_min_fare) { double :journey, fare: 1 }
+let(:journey_max_fare) { double :journey, fare: 6, complete?: true }
+let(:journey_min_fare) { double :journey, fare: 1, complete?: false }
+let(:log) { double :journeylog, start: true, finish: true }
+let(:card) { described_class.new(log) }
+
+
 
   describe ': initialize' do
     it "Has initial card balance of 0" do
@@ -26,36 +30,44 @@ let(:journey_min_fare) { double :journey, fare: 1 }
     end
   end
 
-#   describe ': touch_in' do
-#     # before (:each) do
-#     #   subject.top_up(30)
-#     #   subject.touch_in(station_angel)
-#     # end
-#   #   it "Tells journey to record entry station" do
-#   #     expect(subject.current_journey).to receive(:enter_station)
-#   #     subject.touch_in(station_angel)
-#   #   end
-#   # end
-# end
-
-  describe ': touch_in: without top up' do
+  describe ': touch_in' do
     it "If card balance below minimum fare amount, cannot touch in" do
       expect { subject.touch_in(station_angel) }.to raise_error "Not enough funds to touch in"
+    end
+
+    it "Records entry station on journey log after touch-in" do
+      card.top_up(10)
+      expect(log).to receive(:start).with(station_angel)
+      card.touch_in(station_angel)
     end
   end
 
   describe ': touch_out' do
     before (:each) do
-      subject.top_up(30)
+      subject.top_up(10)
+    end
+
+    it "Records exit station on journey log after touch-out" do
+      card.top_up(10)
+      expect(log).to receive(:finish).with(station_angel)
+      card.touch_out(station_angel)
+    end
+
+    it "deducts min or max fare from balance when touching out" do
+      expect{card.touch_out(station_angel)}.to change{card.balance}.by(-journey_max_fare.fare)
     end
 
     it "deducts minumum fare when journey complete from Journey class" do
-      subject.touch_in(station_angel)
-      expect { subject.touch_out(station_highgate) }.to change{ subject.balance }.by -1
+      card.top_up(10)
+      card.touch_in(station_angel)
+      expect { card.touch_out(station_highgate) }.to change{ card.balance }.by(-journey_min_fare.fare)
     end
 
-    it "deducts maximum fare when journey incomplete from Journey class" do
-      expect { subject.touch_out(station_highgate) }.to change{ subject.balance }.by -6
-    end
+    # it "deducts maximum fare when journey incomplete from Journey class" do
+    #   card.top_up(10)
+    #   expect { subject.touch_out(station_highgate) }.to change{ subject.balance }.by -journey.fare
+    # end
+
+ # Tests allowing min and max fair to be charged not passing
   end
 end

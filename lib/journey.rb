@@ -29,4 +29,8 @@ class Journey
     complete? ? MIN_FARE : MAX_FARE
   end
 
+  def zone
+    @journey[:enter].zone - @journey[:exit].zone
+  end
+
 end

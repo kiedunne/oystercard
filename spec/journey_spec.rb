@@ -51,4 +51,7 @@ let(:station_bank) { double :station_bank, name: 'Bank', zone: 1 }
       end
     end
 
+    describe ' zone' do
+
+    end
 end
